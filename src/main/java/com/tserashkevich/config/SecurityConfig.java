@@ -23,15 +23,10 @@ public class SecurityConfig {
         http
                 .userDetailsService(userDatailsService)
                 .authorizeHttpRequests(requests -> requests
-//                                .requestMatchers("/item/new").hasRole("ADMIN")
-//                                .requestMatchers("/user/**").hasRole("USER")
-//                                .requestMatchers("/auth/**", "/catalog", "/item/info/**").permitAll()
+                                .requestMatchers("/auth/*", "/catalog", "/item/info/*", "/logout").permitAll()
+                                .requestMatchers("/users/personal").authenticated()
+                                .requestMatchers("/orders", "/users", "/item/**").hasAuthority("ADMIN")
                                 .anyRequest().permitAll()
-//                        .requestMatchers("/auth/login", "/error",
-//                                "/auth/registration", "/logout", "/catalog", "/item/info/**").permitAll()
-//                        .anyRequest().hasRole("ADMIN")
-//                        .requestMatchers("/user/**").authenticated()
-
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")

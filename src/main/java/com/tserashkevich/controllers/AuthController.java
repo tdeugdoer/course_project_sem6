@@ -21,12 +21,12 @@ public class AuthController {
     private final UserValidator userValidator;
     @GetMapping("/login")
     public String loginPage() {
-        return "auth/login";
+        return "common/auth/login";
     }
 
     @GetMapping("/registration")
     public String registrationPage(@ModelAttribute("user") User user) {
-        return "auth/registration";
+        return "common/auth/registration";
     }
 
     @PostMapping("/registration")
@@ -35,7 +35,7 @@ public class AuthController {
         userValidator.validate(user, bindingResult);
 
         if (bindingResult.hasErrors())
-            return "/auth/registration";
+            return "common/auth/registration";
 
         userService.save(user);
 

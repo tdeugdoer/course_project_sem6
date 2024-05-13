@@ -73,6 +73,6 @@ public class ItemController {
                            @ModelAttribute("comment") Comment comment) {
         item.addAttribute("item", itemService.findOne(id));
         comments.addAttribute("comments", commentService.findCommentByItem(id));
-        return "user/itemPage";
+        return "common/itemPage";
     }
 }

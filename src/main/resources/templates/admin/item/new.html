@@ -3,67 +3,13 @@
       xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Добавить продукт</title>
-    <th:block th:insert="header :: header"></th:block>
-    <link rel="stylesheet" href="/css/header.css">
+    <th:block th:insert="~{header :: header}"></th:block>
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/basic.css">
+    <link rel="stylesheet" href="/css/item.css">
 </head>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
-
-    .form {
-        width: 50%;
-        margin: 0 auto;
-        padding: 20px;
-        border-radius: 5px;
-        text-align: center;
-    }
-
-    label {
-        display: inline-block;
-        width: 100px;
-        text-align: right;
-        margin-right: 10px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-        width: 200px;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-
-    input[type="submit"] {
-        padding: 5px 10px;
-        background-color: #333;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #555;
-    }
-
-    .error-message {
-        color: red;
-    }
-
-    h1 {
-        text-align: center;
-        margin: 10px 0 10px 0;
-    }
-
-</style>
 
 <body>
 
@@ -82,7 +28,9 @@
 
         Описание:
         <textarea th:field="*{description}" cols="30" rows="6" placeholder="Очень уютный, душ, кухня"></textarea>
-        <div class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+        <div class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description
+            Error
+        </div>
         <br><br>
 
         <label for="file">Фотография: </label>
@@ -94,3 +42,4 @@
 </div>
 
 </body>
+</html>

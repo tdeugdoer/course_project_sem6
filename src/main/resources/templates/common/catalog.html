@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Каталог</title>
+    <th:block th:insert="~{header :: header}"></th:block>
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/basic.css">
+    <link rel="stylesheet" href="/css/catalog.css">
+</head>
+
+<body>
+
+<h1>Каталог</h1>
+<div class="price-box">
+    <div class="price-box-i" th:each="item : ${items}">
+        <div class="price-box-img">
+            <img th:src="@{'/photos/' + ${item.getPhotoName()}}"
+                 alt="Ошибка загрузки картинки">
+        </div>
+        <div class="price-box-name" th:text="${item.getName()}">name</div>
+        <div class="price-box-price" th:text="${item.getPrice()}">price</div>
+        <a th:href="@{/item/info/{id}(id=${item.getId()})}" class="more product-button">Подробнее</a>
+    </div>
+</div>
+
+</body>
+</html>
