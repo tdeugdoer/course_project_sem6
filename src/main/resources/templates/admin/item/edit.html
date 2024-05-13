@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Редактировать продукт</title>
+    <th:block th:insert="header :: header"></th:block>
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    .form {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    label {
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 200px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    input[type="submit"] {
+        padding: 5px 10px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #555;
+    }
+
+    .error-message {
+        color: red;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 10px 0 10px 0;
+    }
+</style>
+
+<body>
+<h1>Редактирование услуги</h1>
+<div class="form">
+    <form th:method="PATCH" th:action="@{/item/edit/{id}(id=${item.getId()})}" enctype="multipart/form-data" th:object="${item}">
+        <label for="name">Название: </label>
+        <input type="text" th:field="*{name}" id="name" placeholder="Домик для 3-их"/>
+        <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+        <br><br>
+
+        <label for="price">Цена: </label>
+        <input type="number" step="0.001" th:field="*{price}" id="price"/>
+        <div class="error-message" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</div>
+        <br><br>
+
+        Описание:
+        <textarea th:field="*{description}" cols="30" rows="6" placeholder="Очень уютный, душ, кухня"></textarea>
+        <div class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+        <br><br>
+
+        <label for="file">Фотография: </label>
+        <input type="file" id="file" name="file" accept="image/*" required/>
+
+        <br><br>
+        <input type="submit" value="Редактировать"/>
+    </form>
+</div>
+
+</body>

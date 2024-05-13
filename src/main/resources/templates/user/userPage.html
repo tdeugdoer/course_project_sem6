@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Заказы</title>
+    <th:block th:insert="header :: header"></th:block>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/table.css">
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    h1, h3 {
+        text-align: center;
+        margin: 10px 0 20px 0;
+    }
+
+
+</style>
+
+<body>
+<h1>Персональная страница</h1>
+<h3>Логин: <span th:text="${user.getLogin()}"></span></h3>
+<h3>ФИО: <span th:text="${user.getUsername()}"></span></h3>
+<h3>Номер телефона: +375 <span th:text="${user.getPhoneNumber()}"></span></h3>
+<h3>Роль: <span th:text="${user.getRole()}"></span></h3>
+
+<table>
+    <tr>
+        <th width="5%">Id</th>
+        <th width="40%">Товар</th>
+        <th width="35%">Дата</th>
+        <th width="20%">Стоимость</th>
+    </tr>
+    <tr th:each="order, orderIndex : ${orders}">
+        <td th:text="${order.getId()}">id</td>
+        <td>
+            <a th:href="@{/item/info/{id}(id=${order.getItem().getId()})}" th:text="${order.getItem().getName()}">item</a>
+        </td>
+        <td>
+            <span hidden="hidden" th:id="'beginDate_' + ${orderIndex.index}" th:text="${order.getReservation().getBeginDate()}">begin</span>
+            <span hidden="hidden" th:id="'endDate_' + ${orderIndex.index}" th:text="${order.getReservation().getEndDate()}">end</span>
+            <span th:text="${#temporals.format(order.getReservation().getBeginDate(), 'dd.MM.yyyy')}">beginDate</span>
+            -
+            <span th:text="${#temporals.format(order.getReservation().getEndDate(), 'dd.MM.yyyy')}">endDate</span>
+        </td>
+        <td th:id="'price_' + ${orderIndex.index}" th:text="${order.getItem().getPrice()}">price</td>
+    </tr>
+</table>
+
+</body>
+<script>
+    let beginDates = [];
+    const beginDateElements = document.querySelectorAll('span[id^="beginDate_"]');
+    for (var i = 0; i < beginDateElements.length; i++) {
+        beginDates.push(new Date(beginDateElements[i].textContent));
+    }
+
+    let endDates = [];
+    const endDateElements = document.querySelectorAll('span[id^="endDate_"]');
+    for (var i = 0; i < endDateElements.length; i++) {
+        endDates.push(new Date(endDateElements[i].textContent));
+    }
+
+    const priceElements = document.querySelectorAll('td[id^="price_"]');
+    priceElements.forEach((element, index) => {
+        const diffInMilliseconds = Math.abs(endDates[index] - beginDates[index]);
+        const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+        element.textContent = parseFloat(element.textContent) * diffInDays;
+    });
+</script>
+</html>

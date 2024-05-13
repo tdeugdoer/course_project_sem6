@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/datePicker/air-datepicker.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <title>Страница продукта</title>
+    <th:block th:insert="header :: header"></th:block>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        width: 90%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 40px auto 0 auto;
+    }
+
+    .product-img {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-img img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .product-text {
+        padding: 60px;
+        position: relative;
+    }
+
+    .product-text h3 {
+        color: #252525;
+        font-size: 2.4rem;
+        font-weight: 600;
+        margin: 0 0 30px 0;
+    }
+
+    .product-text .product-price {
+        font-size: 1.6rem;
+        color: #252525;
+        font-weight: 500;
+    }
+
+    .product-price::after {
+        content: " руб/сутки";
+    }
+
+
+    .product-text p {
+        margin: 30px 0;
+        color: #5e5e5e;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+
+    .product-button-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 30px 0 20px;
+        grid-gap: 20px;
+    }
+
+    .product-button {
+        width: 100%;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        border-radius: 4px;
+        background-color: white;
+        white-space: nowrap;
+    }
+
+    .more {
+        height: 40px;
+        display: block;
+        width: 100%;
+        font-weight: 400;
+        font-size: 17px;
+        color: #27690f;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #27690f;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: auto;
+    }
+
+    .more:hover {
+        border: 1px solid #5b5b5b;
+        background-color: #5b5b5b;
+        color: #fff;
+    }
+
+    .error-message {
+        color: red;
+    }
+
+    .comments {
+        grid-template-columns: none;
+    }
+
+    .comment-item {
+        margin: 20px 0;
+    }
+
+
+    .submit-comment {
+        padding: 5px 10px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+    .submit-comment:hover {
+        background-color: #555;
+    }
+
+</style>
+<body>
+
+<div class="container">
+    <div class="product-img">
+        <img class="product-img" th:src="@{'/photos/' + ${item.getPhotoName()}}" alt="Картинка не загружена">
+
+        <!--        <img class="product-img" src="https://mykaleidoscope.ru/x/uploads/posts/2023-04/1681955008_mykaleidoscope-ru-p-altai-dacha-baza-otdikha-dizain-pinterest-59.jpg" alt="Картинка не загружена">-->
+    </div>
+    <div class="product-text">
+        <h3 th:text="${item.getName()}">name</h3>
+        <span class="product-price" th:text="${item.getPrice()}">price</span>
+        <p th:text="${item.getDescription}">description</p>
+        <div class="product-button-container">
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/item/edit/{id}(id=${item.getId()})}"
+               class="more product-button">Редактировать</a>
+            <form sec:authorize="hasAuthority('ADMIN')" th:method="DELETE"
+                  th:action="@{/item/{id}(id=${item.getId()})}">
+                <input class="more product-button" type="submit" value="Удалить">
+            </form>
+            <input readonly form="reservationForm" class="more product-button" id="datePicker" name="date" type="text"
+                   value="">
+            <form name="reservationForm" id="reservationForm" th:method="POST" th:action="@{/orders/new(item_id=${item.getId()})}">
+                <input sec:authorize="isAuthenticated()" class="more product-button" type="submit"
+                       value="Забронировать">
+                <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="more product-button">Войти для
+                    брони</a>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container comments">
+    <div class="comment-item" th:each="comment : ${comments}">
+        <h3 th:text="${comment.getUser().getLogin()}">user</h3>
+        <p th:text="${comment.getText()}">text</p>
+    </div>
+
+    <form sec:authorize="isAuthenticated()" th:method="POST" th:action="@{/comment/new(item_id=${item.getId()})}" th:object="${comment}">
+        <h2>Комментарий:</h2><br>
+        <textarea required th:field="*{text}" cols="160" rows="6" placeholder="Очень уютный, душ, кухня"></textarea>
+        <br>
+        <div class="error-message" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Description Error</div>
+        <br><br>
+
+        <input class="submit-comment" type="submit" value="Добавить"/>
+    </form>
+</div>
+
+<div hidden="hidden" th:each="order, orderIndex : ${item.getOrders()}">
+    <h3 th:id="'beginDate_' + ${orderIndex.index}" th:text="${order.getReservation().getBeginDate()}">fd</h3>
+    <h3 th:id="'endDate_' + ${orderIndex.index}" th:text="${order.getReservation().getEndDate()}">fd</h3>
+    <br>
+</div>
+
+<script src="/datePicker/air-datepicker.js"></script>
+<script>
+    let beginDates = [];
+    const beginDateElements = document.querySelectorAll('h3[id^="beginDate_"]');
+    for (var i = 0; i < beginDateElements.length; i++) {
+        beginDates.push(beginDateElements[i].textContent);
+    }
+
+    let endDates = [];
+    const endDateElements = document.querySelectorAll('h3[id^="endDate_"]');
+    for (var i = 0; i < endDateElements.length; i++) {
+        endDates.push(endDateElements[i].textContent);
+    }
+
+    let disabledDates = [];
+
+    function getDatesBetween(startDate, endDate) {
+        const currentDate = new Date(startDate);
+        endDate = new Date(endDate);
+
+        while (currentDate <= endDate) {
+            disabledDates.push(new Date(currentDate.toISOString().slice(0, 10)));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+    }
+
+    for (var i = 0; i < beginDates.length; i++) {
+        getDatesBetween(beginDates[i], endDates[i]);
+    }
+
+
+
+
+
+    const reservationForm = document.getElementById('reservationForm');
+    const datePicker = document.getElementById('datePicker');
+
+    reservationForm.addEventListener('submit', function (event) {
+        if (datePicker.value.trim() === '') {
+            event.preventDefault();
+            alert('Пожалуйста, выберите дату');
+        }
+    });
+
+
+
+
+
+
+    const currentDate = new Date();
+    const maxDate = new Date().setDate(currentDate.getDate() + 30);
+
+    let selectedStartDate = null;
+    let selectedEndDate = null;
+
+    new AirDatepicker('#datePicker', {
+        inline: false,
+        range: true,
+        multipleDatesSeparator: ' - ',
+        minDate: currentDate,
+        maxDate: maxDate,
+        onSelect: ({date, datepicker}) => {
+            if (!selectedStartDate) {
+                selectedStartDate = date;
+            } else if (!selectedEndDate) {
+                selectedEndDate = date;
+            } else {
+                selectedStartDate = date;
+                selectedEndDate = null;
+            }
+        },
+
+        onBeforeSelect: ({date, datepicker}) => {
+            if (selectedStartDate && !selectedEndDate) {
+                const sortedDates = [selectedStartDate, date].sort((a, b) => a - b);
+                const start = sortedDates[0];
+                const end = sortedDates[1];
+
+                const rangeContainsDisabledDate = isRangeContainsDisabledDate(start, end);
+
+
+                if (rangeContainsDisabledDate) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
+
+        onRenderCell: ({date}) => {
+            if (disabledDates.some(disabledDate => date.toLocaleDateString() === disabledDate.toLocaleDateString())) {
+                return {
+                    disabled: true
+                };
+            }
+        },
+    });
+
+    function isRangeContainsDisabledDate(start, end) {
+        const currentDate = new Date(start);
+
+        while (currentDate <= end) {
+            if (disabledDates.some(disabledDate => currentDate.toLocaleDateString() === disabledDate.toLocaleDateString())) {
+                return true;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return false;
+    }
+</script>
+
+</body>
+</html>

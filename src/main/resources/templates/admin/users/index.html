@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+    <th:block th:insert="header :: header"></th:block>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/table.css">
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    select {
+        padding: 4px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    input[type="submit"] {
+        padding: 4px 8px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #555;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 10px 0 20px 0;
+    }
+
+</style>
+
+<body>
+
+
+<h1>Пользователи</h1>
+<table>
+    <tr>
+        <th width="20%">Логин</th>
+        <th width="20%">Имя</th>
+        <th width="15%">Телефон</th>
+        <th width="5%">Роль</th>
+        <th width="10%">Изменить роль</th>
+        <th width="10%">Удалить</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.getLogin()}">login</td>
+        <td th:text="${user.getUsername()}">username</td>
+        <td>
+            +375<span  th:text="${user.getPhoneNumber()}">phoneNumber</span>
+        </td>
+        <td th:text="${user.getRole()}">role</td>
+        <td>
+            <form th:method="PATCH" th:action="@{/users/{id}(id=${user.getId()})}">
+                <input type="submit" value="Изменить">
+            </form>
+        </td>
+        <td>
+            <form th:method="DELETE" th:action="@{users/{id}(id=${user.getId()})}">
+                <input type="submit" value="Удалить">
+            </form>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

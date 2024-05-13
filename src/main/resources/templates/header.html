@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Каталог</title>
+</head>
+<body>
+<header th:fragment="header">
+    <div class="header-center">
+        <a class="header-link" th:href="@{/catalog}">Каталог</a>
+        <a class="header-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/item/new}">Добавить товар</a>
+        <a class="header-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/orders}">Заказы</a>
+        <a class="header-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/users}">Аккаунты</a>
+    </div>
+    <div class="header-right">
+        <a class="header-link" sec:authorize="isAnonymous()" th:href="@{/auth/login}">Войти</a>
+        <form th:action="@{/logout}" sec:authorize="isAuthenticated()" th:method="POST">
+            <input class="log" type="submit" value="Выйти из аккаунта">
+        </form>
+        <a th:href="@{/users/personal}"><img sec:authorize="isAuthenticated()" class="account-img"
+                                             src="/images/account.png" alt="Аккаунт"></a>
+    </div>
+</header>
+
+</body>
+</html>
